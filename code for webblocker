@@ -1,0 +1,44 @@
+import os
+def block_websites():
+    website_list = input("Enter websites to block : ").split()
+    with open(get_hosts_file_path(),'r+') as file:
+        hosts_content = file.read()
+        for website in website_list:
+            if website not in hosts_content:
+                file.write(f"\n127.0.0.1 {website}")
+        print("Websites blocked successfully.")
+def unblock_websites():
+    website_list = input("Enter websites to unblock (separated by spaces): ").split()
+    with open(get_hosts_file_path(), 'r+') as file:
+        lines = file.readlines()
+        file.seek(0)
+        for line in lines:
+            if not any(website in line for website in website_list):
+                file.write(line)
+        file.truncate()
+        print("Websites unblocked successfully.")
+def get_hosts_file_path():
+    system = os.name
+    if system == 'posix':  
+        return '/etc/hosts'
+    elif system == 'nt': 
+        return r'C:\Windows\System32\drivers\etc\hosts'
+    else:
+        raise OSError("Unsupported operating system.")
+def main():
+    while True:
+        print("\nMenu:")
+        print("1. Block Websites")
+        print("2. Unblock Websites")
+        print("3. Exit")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            block_websites()
+        elif choice == '2':
+            unblock_websites()
+        elif choice == '3':
+            break
+        else:
+            print("Invalid choice. Please select again.")
+if __name__ =="__main__":
+    main()
